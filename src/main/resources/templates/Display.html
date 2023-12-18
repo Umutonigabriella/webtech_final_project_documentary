@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+* {
+  box-sizing: border-box;
+	background-image: url(../image/doc3.jpg);
+	  background-repeat: no repeat;
+}
+
+#keyword {
+
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 20%;
+  font-size: 12px;
+  padding: 8px 10px 8px 20px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+}
+#btnsearch{
+    width: 20%;
+  padding: 8px;
+  margin: 4px 2px;
+  background: rgb(10, 1, 49);
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+#btnClear{
+
+    width: 20%;
+  padding: 8px;
+  margin: 4px 2px;
+  background: rgb(49, 1, 1);
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+#btnSearch{
+
+    width: 20%;
+  padding: 8px;
+  margin: 4px 2px;
+   background: rgb(10, 1, 49);
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+#btnAdd{
+    background-position: 10px 10px;
+  background-repeat: no-repeat;
+  width: 20%;
+  font-size: 12px;
+  padding: 8px 10px 8px 20px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  background: rgb(10, 1, 49);
+  color: white;
+  font-size: 12px;
+    cursor: pointer;
+}
+.bnt{
+    display: flex;
+    gap: 20px;
+}
+
+#btnUpdate{
+    width: 30%;
+  padding: 5px;
+  margin: 2px 2px;
+  background: rgb(23, 131, 2);
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+#btnDelete{
+    width: 30%;
+  padding: 5px;
+  margin: 2px 2px;
+  background: rgb(168, 0, 0);
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none; /* Prevent double borders */
+  cursor: pointer;
+}
+
+
+#myTable {
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #ddd;
+  font-size: 18px;
+  
+}
+.elements{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+.element{
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+span{
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+}
+#myTable th, #myTable td {
+  text-align: left;
+  padding: 12px;
+}
+
+#myTable tr {
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  background-color: #f1f1f1;
+}
+</style>
+</head>
+<body>
+
+<a th:href="@{/registerAppointment}" id="btnAdd" class="btn btn-primary btn-sm">Add Appointment</a><br><br>
+<form th:action="@{/appointments}">
+    Filter:<input type="text" id="keyword" name="keyword" size="50"  th:value="${keyword}" placeholder="Search...">
+    <input type="submit" id="btnSearch" value="Search" />
+    <input type="button" value="Clear" id="btnClear" onclick="clearSearch()" />
+</form>
+<table id="myTable">
+    <thead>
+    <tr class="header">
+
+        <th style="width:10%;">Id</th>
+        <th style="width:10%;"> Name</th>
+        <th tyle="width:10%;">Phone number</th>
+        <th tyle="width:10%;">email</th>
+        <th tyle="width:10%;">date</th>
+        <th tyle="width:10%;">time</th>
+        <th tyle="width:10%;">country</th>
+        <th tyle="width:10%;">city</th>
+        <th tyle="width:10%;">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="appointments: ${ListOfAppointment}">
+        <tr>
+
+            <td th:text="${appointments.id}"></td>
+            <td th:text="${appointments.fullName}"></td>
+            <td th:text="${appointments.number}"></td>
+            <td th:text="${appointments.email}"></td>
+            <td th:text="${appointments.date}"></td>
+            <td th:text="${appointments.time}"></td>
+            <td th:text="${appointments.country}"></td>
+            <td th:text="${appointments.city}"></td>
+            <td class="bnt">
+
+                <a id="btnUpdate" th:href="@{/UpdateAppointment/{id}(id=${appointments.id})}"> Update </a>
+                <a id="btnDelete" th:href="@{/DeleteAppointment/{id}(id=${appointments.id})}"> Delete </a>
+
+            </td>
+
+        </tr>
+
+
+    </th:block>
+    </tbody>
+
+</table>
+<div class = "elements" th:if = "${totalPages > 1}">
+    <div class="elements" >
+        <div class=" elements">
+            Total Rows: [[${totalElements}]]
+        </div>
+        <div class=" element">
+            <span th:each="i: ${#numbers.sequence(1,totalPages)}">
+                <a th:if="${currentPage !=i}" th:href="@{'/page/' + ${i}}" >[[${i}]]</a>
+                <span th:unless="${currentPage != i }"> [[${i}]]</span> &nbsp; &nbsp; &nbsp; &nbsp;
+            </span>
+        </div>
+        <div class=" element">
+            <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1}}">Next</a>
+            <span th:unless="${currentPage < totalPages}">Next</span>
+        </div>
+
+        <div class=" element">
+            <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage }}">Last</a> <br>
+            <span th:unless="${currentPage < totalPages}">Last</span> &nbsp; &nbsp; &nbsp; &nbsp;
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function clearSearch() {
+        window.location = "[[@{/appointments}]]";
+    }
+</script>
+
+</body>
+</html>
